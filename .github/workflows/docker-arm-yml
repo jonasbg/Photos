@@ -9,13 +9,9 @@ env:
 
 jobs:   
   build:    
-    runs-on: ubuntu-18.04    
+    runs-on: ubuntu-latest
     env:      
-      DOCKER_REGISTRY: kemansel.azurecr.io      
-      DOCKER_IMAGE: kmansel/express-me      
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  
-      DOCKER_TARGET_PLATFORM: linux/arm/v7                 
+      DOCKER_TARGET_PLATFORM: linux/arm/v8               
     steps:    
     - name: Checkout the code       
       uses: actions/checkout@v1          
@@ -39,13 +35,13 @@ jobs:
         echo ::set-output name=version::${GITHUB_RUN_NUMBER}    
 
     - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
     
     - name: Run Buildx (push image)      
       if: success()      
       run: |        
         docker buildx build \       
-       --platform ${{ steps.prepare.outputs.docker_platform }} \
-       --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \ 
-       --file ./Dockerfile \        
-       --output type=image,push=true .
+        --platform ${{ steps.prepare.outputs.docker_platform }} \
+        --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \ 
+        --file ./Dockerfile \        
+        --output type=image,push=true .
