@@ -28,6 +28,7 @@ namespace photos
         {
 
             services.AddControllers();
+            services.AddMemoryCache();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "photos", Version = "v1" });
