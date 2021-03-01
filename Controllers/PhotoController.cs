@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +15,6 @@ namespace photos.Controllers
         private readonly ILogger<PhotosController> _logger;
         private IMemoryCache _cache;
 
-
         public PhotosController(ILogger<PhotosController> logger, IMemoryCache memoryCache)
         {
             _logger = logger;
@@ -26,16 +25,25 @@ namespace photos.Controllers
         public IEnumerable<string> Get()
         {
             DirectoryInfo info = new DirectoryInfo("/data");
-            var files = info.GetFiles("*.*", System.IO.SearchOption.AllDirectories).OrderBy(p => p.CreationTime).Select(p => p.FullName).ToArray();
+            var files = info.GetFiles("*.*", System.IO.SearchOption.AllDirectories)
+                .OrderBy(p => p.CreationTime)
+                .ToArray();
+
+            var lastDay = files.First().CreationTime;
+            var filess = files.Where(p => 
+                p.CreationTime.Year == lastDay.Year &&
+                p.CreationTime.Month == lastDay.Month &&
+                p.CreationTime.Day == lastDay.Day
+            ).Select(p => p.FullName);
 
             var cacheEntryOptions = new MemoryCacheEntryOptions()
             // Keep in cache for this time, reset time if accessed.
             .SetSlidingExpiration(TimeSpan.FromMinutes(10));
 
             // Save data in cache.
-            _cache.Set("files", files, cacheEntryOptions);
+            _cache.Set("files", filess, cacheEntryOptions);
 
-            return files;
+            return filess;
         }
 
         [HttpGet("{index}")]
