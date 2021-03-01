@@ -1,0 +1,47 @@
+name: Docker-armV8
+
+on:  
+  push:    
+    branches: [ master ]  
+
+env:
+  IMAGE_NAME: photos
+
+jobs:   
+  build:    
+    runs-on: ubuntu-latest
+    env:      
+      DOCKER_TARGET_PLATFORM: linux/arm/v8               
+    steps:    
+    - name: Checkout the code       
+      uses: actions/checkout@v1          
+    
+    - name: Set up Docker Buildx      
+      uses: crazy-max/ghaction-docker-buildx@v1      
+      with:        
+        version: latest    
+    
+    - name: Prepare      
+      if: success()      
+      id: prepare      
+      run: |       
+        IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+        # Change all uppercase to lowercase
+        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]') 
+
+        echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}        
+        echo ::set-output name=docker_image::${IMAGE_ID}        
+        echo ::set-output name=version::${GITHUB_RUN_NUMBER}    
+
+    - name: Log into registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+    
+    - name: Run Buildx (push image)      
+      if: success()      
+      run: |        
+        docker buildx build \       
+        --platform ${{ steps.prepare.outputs.docker_platform }} \
+        --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \ 
+        --file ./Dockerfile \        
+        --output type=image,push=true .
