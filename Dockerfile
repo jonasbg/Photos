@@ -5,7 +5,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:latest AS build
 WORKDIR /src
 COPY ["photos.csproj", "."]
 RUN dotnet restore "photos.csproj"
@@ -14,7 +14,7 @@ RUN dotnet build "photos.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "photos.csproj" \
-    --runtime alpine-x64 \
+    --runtime alpine-arm64 \
    # --self-contained true \
     /p:PublishTrimmed=true \
     /p:PublishSingleFile=true \
