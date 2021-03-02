@@ -36,6 +36,11 @@ jobs:
 
       - name: Push image
         run: |
+          sudo apt-get update -y
+          sudo apt-get upgrade -y
+          sudo apt-get install -y qemu-user-static binfmt-support
+          update-binfmts --version
+          
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
 
           # Change all uppercase to lowercase
