@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,7 +26,6 @@ namespace photos.Controllers
         public IEnumerable<string> Get()
         {
             var dir = "/data";
-            //var dir = "/mnt/mykid/";
             DirectoryInfo info = new DirectoryInfo(dir);
             var files = info.GetFiles("*.*", System.IO.SearchOption.AllDirectories)
                 .Where(p => !p.Name.EndsWith(".txt"))
