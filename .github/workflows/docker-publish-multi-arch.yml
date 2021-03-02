@@ -36,9 +36,6 @@ jobs:
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           version: latest
-      
-      - name: BuildX Prepare
-        run: docker buildx create --use
 
       - name: Push image
         run: |
