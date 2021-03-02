@@ -29,19 +29,14 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-      
-      - name: Docker Setup Buildx
-        # You may pin to the exact commit or the version.
-        # uses: docker/setup-buildx-action@154c24e1f33dbb5865a021c99f1318cfebf27b32
-        uses: docker/setup-buildx-action@v1.1.1
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       
       - name: BuildX Prepare
         run: docker buildx create --use
 
       - name: Push image
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=${{ github.repository }}/$IMAGE_NAME
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -58,4 +53,7 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
 
-          docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile --tag $IMAGE_ID:$VERSION --push .
+          docker buildx build --push \
+          --platform linux/amd64,linux/arm64,linux/arm/v7 \
+          --file Dockerfile \
+          --tag $IMAGE_ID:$VERSION .
