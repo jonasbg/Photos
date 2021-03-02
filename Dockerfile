@@ -15,6 +15,8 @@ RUN dotnet build "photos.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "photos.csproj" \
     --runtime alpine-arm64 \
+    #--runtime linux-musl-x64 \
+    #--runtime alpine-x64 \
    # --self-contained true \
     /p:PublishTrimmed=true \
     /p:PublishSingleFile=true \
