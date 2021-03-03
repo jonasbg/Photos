@@ -31,15 +31,10 @@ jobs:
       - name: Log into registry
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       
-      - name: Docker Buildx
+      - name: Docker Setup Buildx
         # You may pin to the exact commit or the version.
-        # uses: crazy-max/ghaction-docker-buildx@126d331dc69f4a1aa02452e374835e6a5d565613
-        uses: crazy-max/ghaction-docker-buildx@v3.3.1
-        with:
-          # Buildx version. Example: v0.3.0
-          buildx-version: latest
-          # QEMU static binaries Docker image version. Example: 4.2.0-7
-          qemu-version: latest
+        # uses: docker/setup-buildx-action@154c24e1f33dbb5865a021c99f1318cfebf27b32
+        uses: docker/setup-buildx-action@v1.1.1
 
       - name: Push image
         run: |
