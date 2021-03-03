@@ -31,11 +31,15 @@ jobs:
       - name: Log into registry
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       
-      - name: install buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
+      - name: Docker Buildx
+        # You may pin to the exact commit or the version.
+        # uses: crazy-max/ghaction-docker-buildx@126d331dc69f4a1aa02452e374835e6a5d565613
+        uses: crazy-max/ghaction-docker-buildx@v3.3.1
         with:
-          version: latest
+          # Buildx version. Example: v0.3.0
+          buildx-version: latest
+          # QEMU static binaries Docker image version. Example: 4.2.0-7
+          qemu-version: latest
 
       - name: Push image
         run: |
@@ -56,7 +60,9 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
 
-          docker buildx build --push \
+          docker buildx build . \
+          --push \
           --platform linux/amd64,linux/arm64 \
           --file Dockerfile \
-          --tag $IMAGE_ID:$VERSION .
+          --tag $IMAGE_ID:$VERSION \
+          --tag $IMAGE_ID:$(date '+%Y%m%d')
