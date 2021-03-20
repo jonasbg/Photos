@@ -4,8 +4,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
+ARG TARGETPLATFORM
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:latest AS build
 WORKDIR /src
 COPY ["photos.csproj", "."]
 RUN dotnet restore "photos.csproj"
@@ -13,13 +14,20 @@ COPY . .
 RUN dotnet build "photos.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "photos.csproj" \
-    --runtime alpine-x64 \
-   # --self-contained true \
-    /p:PublishTrimmed=true \
-    /p:PublishSingleFile=true \
-    -c Release \
-    -o /app/publish
+RUN if [ "$TARGETPLATFORM" == "linux/amd64" ] ;\
+      then \ 
+        export RUNTIME=alpine-x64; \
+    elif [ "$TARGETPLATFORM" == "linux/arm64" ] ;\
+      then \
+        export RUNTIME=alpine-arm64; \
+    fi; \
+    &&  dotnet publish "photos.csproj" \
+        --runtime "${RUNTIME}" \
+        --self-contained true \
+        /p:PublishTrimmed=true \
+        /p:PublishSingleFile=true \
+        -c Release \
+        -o /app/publish
 
 FROM base AS final
 
