@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace photos.Controllers
 {
@@ -63,8 +64,21 @@ namespace photos.Controllers
                 _logger.LogInformation("Repopulating cache");
             } 
 
-            var image = System.IO.File.OpenRead(files.ToArray()[--index]);
-            return File(image, "image/jpeg");
+            var file = System.IO.File.OpenRead(files.ToArray()[--index]);
+
+            string contentType = "";
+            if(file.Name.EndsWith("heic"))
+                contentType = "image/heic";
+
+            var fileProvider = new FileExtensionContentTypeProvider();
+            // Figures out what the content type should be based on the file name.  
+            if (string.IsNullOrEmpty(contentType))
+            {
+                if(!fileProvider.TryGetContentType(file.Name, out contentType))
+                    throw new ArgumentOutOfRangeException($"Unable to find Content Type for file name {file.Name}.");
+            }
+
+            return File(file, contentType);
             
         }
     }
