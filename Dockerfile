@@ -23,7 +23,7 @@ RUN if [ "$TARGETPLATFORM" == "linux/amd64" ] ;\
         /p:PublishTrimmed=true \
         /p:PublishSingleFile=true \
         -c Release \
-        -o /app/publish
+        -o /app/publish \
     elif [ "$TARGETPLATFORM" == "linux/arm64" ] ;\
       then \
         export RUNTIME=alpine-arm64; \
@@ -33,7 +33,7 @@ RUN if [ "$TARGETPLATFORM" == "linux/amd64" ] ;\
         /p:PublishTrimmed=true \
         /p:PublishSingleFile=true \
         -c Release \
-        -o /app/publish
+        -o /app/publish \
     fi;
 
 FROM base AS final
