@@ -32,7 +32,7 @@ namespace photos.Controllers
                 .Where(p => p.Name.EndsWith(".JPG"))
                 .Where(p => p.Name.EndsWith(".mp4"))
                 .Where(p => p.Name.EndsWith(".png"))
-                .OrderBy(p => p.CreationTime)
+                .OrderByDescending(p => p.CreationTime)
                 .ToArray();
 
             var lastDay = files.First().CreationTime;
