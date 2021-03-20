@@ -17,17 +17,24 @@ FROM build AS publish
 RUN if [ "$TARGETPLATFORM" == "linux/amd64" ] ;\
       then \ 
         export RUNTIME=alpine-x64; \
-    elif [ "$TARGETPLATFORM" == "linux/arm64" ] ;\
-      then \
-        export RUNTIME=alpine-arm64; \
-    fi; \
-    && dotnet publish "photos.csproj" \
-        --runtime "${RUNTIME}" \
+        dotnet publish "photos.csproj" \
+        --runtime alpine-x64 \
         #--self-contained true \
         /p:PublishTrimmed=true \
         /p:PublishSingleFile=true \
         -c Release \
         -o /app/publish
+    elif [ "$TARGETPLATFORM" == "linux/arm64" ] ;\
+      then \
+        export RUNTIME=alpine-arm64; \
+        dotnet publish "photos.csproj" \
+        --runtime alpine-arm64 \
+        #--self-contained true \
+        /p:PublishTrimmed=true \
+        /p:PublishSingleFile=true \
+        -c Release \
+        -o /app/publish
+    fi;
 
 FROM base AS final
 
