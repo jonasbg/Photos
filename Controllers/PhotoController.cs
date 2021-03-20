@@ -26,6 +26,8 @@ namespace photos.Controllers
         {
             DirectoryInfo info = new DirectoryInfo("/data");
             var files = info.GetFiles("*.*", System.IO.SearchOption.AllDirectories)
+                .Where(p => !p.Name.EndsWith(".txt"))
+                .Where(p => !p.Name.EndsWith(".yml"))
                 .OrderBy(p => p.CreationTime)
                 .ToArray();
 
