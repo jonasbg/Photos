@@ -21,8 +21,7 @@ RUN if [ "$TARGETPLATFORM" == "linux/amd64" ] ;\
       then \
         export RUNTIME=alpine-arm64; \
     fi; \
-    echo RUNTIME: ${RUNTIME}
-RUN  dotnet publish "photos.csproj" \
+    && dotnet publish "photos.csproj" \
         --runtime "${RUNTIME}" \
         #--self-contained true \
         /p:PublishTrimmed=true \
