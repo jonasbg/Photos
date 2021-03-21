@@ -5,6 +5,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 
 FROM mcr.microsoft.com/dotnet/sdk:latest AS build
 WORKDIR /src
@@ -16,7 +17,6 @@ RUN dotnet build "photos.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN if [ "$TARGETPLATFORM" == "linux/amd64" ] ;\
       then \ 
-        export RUNTIME=alpine-x64; \
         dotnet publish "photos.csproj" \
         --runtime alpine-x64 \
         #--self-contained true \
@@ -26,7 +26,6 @@ RUN if [ "$TARGETPLATFORM" == "linux/amd64" ] ;\
         -o /app/publish \
     elif [ "$TARGETPLATFORM" == "linux/arm64" ] ;\
       then \
-        export RUNTIME=alpine-arm64; \
         dotnet publish "photos.csproj" \
         --runtime alpine-arm64 \
         #--self-contained true \
