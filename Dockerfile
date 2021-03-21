@@ -20,7 +20,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ] ;\
         export dotnet_build_runtime=linux-musl-x64; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ] ;\
       then \
-        export dotnet_build_runtime=linux-arm64; \
+        export dotnet_build_runtime=linux-musl-arm64; \
     fi \
     && dotnet publish "photos.csproj" \
         --runtime ${dotnet_build_runtime} \
